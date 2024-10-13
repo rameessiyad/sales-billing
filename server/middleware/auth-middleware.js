@@ -7,7 +7,6 @@ const isAuth = async (req, res, next) => {
     //get token from cookies
     if (req.cookies && req.cookies.token) {
         token = req.cookies.token;
-        console.log(token, "token")
     } else {
         console.log('No token found');
         return res.status(401).json({

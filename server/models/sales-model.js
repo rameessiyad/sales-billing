@@ -19,7 +19,6 @@ const saleSchema = new mongoose.Schema({
     },
     customer: {
         name: { type: String, required: true },
-        email: { type: String, required: true }
     },
     dateOfSale: { type: Date, default: Date.now }
 }, { timestamps: true });
