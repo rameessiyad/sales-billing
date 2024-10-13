@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner';
-import LoginForm from '../pages/LoginForm';
 
 const Dashboard = lazy(() => import('../pages/Dashboard'));
+const LoginForm = lazy(() => import('../pages/LoginForm'));
 
 const Routing = () => {
     return (
