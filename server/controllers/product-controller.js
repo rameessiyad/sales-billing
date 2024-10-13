@@ -53,4 +53,14 @@ module.exports = {
             message: 'Product deleted'
         })
     }),
+
+    //@desc total products count
+    //@route GET /api/v1/product/count
+    totalProductsCount: asyncHandler(async (req, res) => {
+        const count = await Product.countDocuments();
+        res.status(200).json({
+            success: true,
+            count
+        })
+    })
 }

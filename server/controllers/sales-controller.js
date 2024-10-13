@@ -46,5 +46,25 @@ module.exports = {
             success: true,
             sales,
         })
+    }),
+
+    //@desc list latest 5 sales
+    //@route GET /api/v1/sales/latest
+    listLatestSales: asyncHandler(async (req, res) => {
+        const sales = await Sale.find().sort({ createdAt: -1 }).limit(5);
+        res.status(200).json({
+            success: true,
+            sales
+        })
+    }),
+
+    ///@desc total sales count
+    //@route GET /api/v1/sales/count
+    totalSalesCount: asyncHandler(async (req, res) => {
+        const count = await Sale.countDocuments();
+        res.status(200).json({
+            success: true,
+            count
+        })
     })
 }
