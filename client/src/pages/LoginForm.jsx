@@ -2,6 +2,7 @@
 import React from 'react';
 
 const LoginForm = () => {
+    
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-500">
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-2xl">
