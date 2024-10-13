@@ -36,5 +36,15 @@ module.exports = {
             message: 'Sale added successfully',
             sale: newSale
         });
+    }),
+
+    //#desc list all sales
+    //@route GET /api/v1/sales
+    listSales: asyncHandler(async (req, res) => {
+        const sales = await Sale.find();
+        res.status(200).json({
+            success: true,
+            sales,
+        })
     })
 }
