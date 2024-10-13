@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaBox, FaReceipt, FaPlus } from 'react-icons/fa';
 import { RiLogoutBoxRLine } from "react-icons/ri";
+import {Link} from 'react-router-dom'
 
 const SideBar = () => {
   return (
@@ -14,22 +15,22 @@ const SideBar = () => {
       <nav className="flex-1 p-4">
         <ul className="space-y-4">
           <li>
-            <a href="/products" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
+            <Link to="/products" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
               <FaBox className="mr-3" />
               All Products
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/sales" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
+            <Link to="/sales" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
               <FaReceipt className="mr-3" />
               All Sales
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/new-sale" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
+            <Link to="/new-sale" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
               <FaPlus className="mr-3" />
               New Sale
-            </a>
+            </Link>
           </li>
 
           <li className='fixed bottom-5'>
