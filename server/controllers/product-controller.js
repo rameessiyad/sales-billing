@@ -23,13 +23,14 @@ module.exports = {
         });
     }),
 
-    //#desc get all products
+ 
+    //#desc list all products
     //#route GET /api/v1/product
-    getProducts: asyncHandler(async (req, res) => {
+    listProducts: asyncHandler(async (req, res) => {
         const products = await Product.find();
         res.status(200).json({
             success: true,
             data: products
         });
-    })
+    }),
 }
