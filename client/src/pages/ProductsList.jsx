@@ -20,12 +20,18 @@ const mockProducts = [
 const ProductsList = () => {
     const [products, setProducts] = useState(mockProducts);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
     const productsPerPage = 4;
+
+    // Filter products based on search term
+    const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     // Get current products based on the page
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -40,6 +46,17 @@ const ProductsList = () => {
         <AppLayout>
             <div className="p-6 space-y-6">
                 <h2 className="text-2xl font-bold text-gray-700 mb-6">Product List</h2>
+
+                {/* Search Bar */}
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Search by product name..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="border border-gray-300 rounded-lg p-2 w-full"
+                    />
+                </div>
 
                 <div className="bg-white p-6 shadow-lg rounded-lg">
                     {/* Products Table */}
@@ -83,7 +100,7 @@ const ProductsList = () => {
                     <nav>
                         <ul className="flex space-x-2">
                             {Array.from(
-                                { length: Math.ceil(products.length / productsPerPage) },
+                                { length: Math.ceil(filteredProducts.length / productsPerPage) },
                                 (_, i) => (
                                     <li key={i}>
                                         <button
