@@ -23,7 +23,7 @@ module.exports = {
         });
     }),
 
- 
+
     //#desc list all products
     //#route GET /api/v1/product
     listProducts: asyncHandler(async (req, res) => {
@@ -32,5 +32,25 @@ module.exports = {
             success: true,
             data: products
         });
+    }),
+
+    //@desc delete product
+    //@route DELETE /api/v1/product/:id
+    deleteProduct: asyncHandler(async (req, res) => {
+        const { id } = req.params;
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        await product.findByIdAndDelete(id);
+        res.status(200).json({
+            success: true,
+            message: 'Product deleted'
+        })
     }),
 }
