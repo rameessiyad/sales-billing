@@ -5,8 +5,9 @@ const isAuth = async (req, res, next) => {
     let token;
 
     //get token from cookies
-    if (req.cookie && req.cookies.token) {
+    if (req.cookies && req.cookies.token) {
         token = req.cookies.token;
+        console.log(token, "token")
     } else {
         console.log('No token found');
         return res.status(401).json({
@@ -18,7 +19,7 @@ const isAuth = async (req, res, next) => {
     try {
         //verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id).select('-password');
+        req.user = await User.findById(decoded.userId).select('-password');
 
         if (!req.user) {
             return res.status(401).json({
@@ -36,3 +37,5 @@ const isAuth = async (req, res, next) => {
         })
     }
 }
+
+module.exports = isAuth
