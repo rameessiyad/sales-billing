@@ -1,14 +1,17 @@
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import LoadingSpinner from '../components/LoadingSpinner';
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 
 const Routing = () => {
     return (
-        <>
-            <Routes>
-                <Route path="/" element={<Dashboard />} />
-            </Routes>
-        </>
+        <div>
+            <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                </Routes>
+            </Suspense>
+        </div>
     )
 }
 
