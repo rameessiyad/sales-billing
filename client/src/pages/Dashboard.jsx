@@ -1,39 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
-
-const mockSales = [
-  { id: 1, product: 'Product A', amount: 100, date: '2024-10-10' },
-  { id: 2, product: 'Product B', amount: 200, date: '2024-10-11' },
-  { id: 3, product: 'Product C', amount: 150, date: '2024-10-12' },
-  { id: 4, product: 'Product D', amount: 300, date: '2024-10-13' },
-  { id: 5, product: 'Product E', amount: 250, date: '2024-10-14' },
-  { id: 6, product: 'Product F', amount: 350, date: '2024-10-15' }
-];
+import { baseUrl } from '../../baseUrl';
 
 const Dashboard = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [latestSales, setLatestSales] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProductsCount = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/product/count`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      const data = await response.json();
+
+      if (data.success) {
+        setTotalProducts(data.count);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchSalesCount = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/sales/count`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      const data = await response.json();
+
+      if (data.success) {
+        setTotalSales(data.count);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    setTotalProducts(50); 
-    setTotalSales(20); 
-    setLatestSales(mockSales); 
-  }, []);
+    //fetch latest sales
+    const fetchLatestSales = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/sales/latest`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setLatestSales(data.sales);
+        } else {
+          console.log(data.message);
+        }
+
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLatestSales();
+    fetchProductsCount();
+    fetchSalesCount();
+  }, [])
+
+  if (loading) {
+    return <div>
+      <div className="text-center p-6">Loading...</div>
+    </div>;
+  }
 
   return (
     <AppLayout>
       <div className="p-6 space-y-6">
         {/* Total Products and Total Sales */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Total Products */}
-          <div className="p-4 bg-white shadow-lg rounded-lg">
+          <div className="p-6 bg-white shadow-lg rounded-lg flex justify-between items-center">
             <h3 className="text-lg font-semibold text-gray-700">Total Products</h3>
             <p className="mt-2 text-3xl font-bold text-gray-900">{totalProducts}</p>
           </div>
 
           {/* Total Sales */}
-          <div className="p-4 bg-white shadow-lg rounded-lg">
+          <div className="p-6 bg-white shadow-lg rounded-lg flex justify-between items-center">
             <h3 className="text-lg font-semibold text-gray-700">Total Sales</h3>
             <p className="mt-2 text-3xl font-bold text-gray-900">{totalSales}</p>
           </div>
@@ -48,17 +114,21 @@ const Dashboard = () => {
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
                 <tr className="bg-gray-100 border-b">
+                  <th className="px-4 py-3 text-left text-gray-600 font-semibold">Customer</th>
                   <th className="px-4 py-3 text-left text-gray-600 font-semibold">Product</th>
+                  <th className="px-4 py-3 text-left text-gray-600 font-semibold">Quantity</th>
                   <th className="px-4 py-3 text-left text-gray-600 font-semibold">Amount</th>
                   <th className="px-4 py-3 text-left text-gray-600 font-semibold">Date</th>
                 </tr>
               </thead>
               <tbody>
                 {latestSales.slice(0, 5).map((sale) => (
-                  <tr key={sale.id} className="border-b hover:bg-gray-50 transition">
-                    <td className="px-4 py-3 text-gray-700 font-medium">{sale.product}</td>
-                    <td className="px-4 py-3 text-gray-700">${sale.amount}</td>
-                    <td className="px-4 py-3 text-gray-500">{sale.date}</td>
+                  <tr key={sale._id} className="border-b hover:bg-gray-50 transition">
+                    <td className="px-4 py-3 text-gray-700 font-medium">{sale.customer}</td>
+                    <td className="px-4 py-3 text-gray-700 font-medium">{sale.products.map(p => p.productName).join(', ')}</td>
+                    <td className="px-4 py-3 text-gray-700">{sale.products.reduce((acc, p) => acc + p.quantity, 0)}</td>
+                    <td className="px-4 py-3 text-gray-700">₹{sale.totalAmount}</td>
+                    <td className="px-4 py-3 text-gray-500">{new Date(sale.date).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

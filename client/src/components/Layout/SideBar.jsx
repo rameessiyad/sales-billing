@@ -38,6 +38,12 @@ const SideBar = () => {
       <nav className="flex-1 p-4">
         <ul className="space-y-4">
           <li>
+            <Link to="/" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
+              <FaBox className="mr-3" />
+              Dashboard
+            </Link>
+          </li>
+          <li>
             <Link to="/products" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
               <FaBox className="mr-3" />
               All Products

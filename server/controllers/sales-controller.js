@@ -72,7 +72,7 @@ module.exports = {
     ///@desc total sales count
     //@route GET /api/v1/sales/count
     totalSalesCount: asyncHandler(async (req, res) => {
-        const count = await Sale.countDocuments();
+        const count = await Sales.countDocuments();
         res.status(200).json({
             success: true,
             count
