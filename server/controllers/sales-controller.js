@@ -77,5 +77,15 @@ module.exports = {
             success: true,
             count
         })
-    })
+    }),
+
+    //@desc get sale by id
+    //@route GET /api/v1/sales/:id
+    getSaleById: asyncHandler(async (req, res) => {
+        const sale = await Sales.findById(req.params.id);
+        res.status(200).json({
+            success: true,
+            sale
+        })
+    }),
 }

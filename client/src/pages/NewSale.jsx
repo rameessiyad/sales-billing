@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import { baseUrl } from '../../baseUrl';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const NewSale = () => {
     const [subSales, setSubSales] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [customerName, setCustomerName] = useState('');  // New state for customer name
+    const [customerName, setCustomerName] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSubSales = async () => {
@@ -90,7 +93,8 @@ const NewSale = () => {
             const data = await response.json();
 
             if (data.success) {
-                toast.success('Bill generated successfully');
+                toast.success('Bill generated');
+                navigate(`/invoice/${data.sale._id}`)
             } else {
                 toast.error(data.message);
             }

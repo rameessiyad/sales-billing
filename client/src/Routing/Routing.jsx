@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner';
 import LoginForm from '../pages/LoginForm';
+import Invoice from '../pages/Invoice';
 
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const ProductsList = lazy(() => import('../pages/ProductsList'));
@@ -29,6 +30,7 @@ const Routing = () => {
                     <Route path="/products" element={<ProductsList />} />
                     <Route path="/sales" element={<SalesList />} />
                     <Route path="/new-sale" element={<NewSale />} />
+                    <Route path="/invoice/:saleId" element={<Invoice />} />
                 </Routes>
             </Suspense>
         </div>

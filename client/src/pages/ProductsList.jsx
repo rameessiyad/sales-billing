@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import { baseUrl } from '../../baseUrl';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const ProductsList = () => {
     const [products, setProducts] = useState([]);
@@ -10,6 +11,8 @@ const ProductsList = () => {
     const [quantities, setQuantities] = useState({});
     const productsPerPage = 4;
     const [selectedProducts, setSelectedProducts] = useState(new Set());
+
+    const navigate = useNavigate();
 
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -79,6 +82,7 @@ const ProductsList = () => {
             const data = await response.json();
             if (data.success) {
                 toast.success("saled added");
+                navigate('/new-sale')
             }
 
         } catch (error) {
