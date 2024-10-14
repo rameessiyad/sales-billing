@@ -107,6 +107,16 @@ module.exports = {
             message: 'Product quantity updated successfully',
             subSale,
         });
-    })
+    }),
+
+    //@desc list subSales
+    //@route GET /api/v1/sub-sales
+    listSubSales: asyncHandler(async (req, res) => {
+        const subSales = await SubSales.find();
+        res.status(200).json({
+            success: true,
+            subSales
+        })
+    }),
 
 }
