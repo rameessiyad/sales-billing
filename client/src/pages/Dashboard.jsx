@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import { baseUrl } from '../../baseUrl';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [latestSales, setLatestSales] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const fetchProductsCount = async () => {
     try {
@@ -137,7 +140,10 @@ const Dashboard = () => {
 
           {/* Show More Button */}
           <div className="mt-4 text-center">
-            <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none">
+
+            <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
+              onClick={() => navigate('/sales')}
+            >
               Show More
             </button>
           </div>

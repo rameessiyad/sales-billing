@@ -1,6 +1,6 @@
 const express = require('express');
 const isAuth = require('../middleware/auth-middleware');
-const { addSale, listSales, listLatestSales, totalSalesCount, getSaleById } = require('../controllers/sales-controller');
+const { addSale, listSales, listLatestSales, totalSalesCount, getSaleById, deleteSale } = require('../controllers/sales-controller');
 
 const router = express.Router();
 

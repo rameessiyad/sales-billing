@@ -1,39 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import { AiFillDelete } from 'react-icons/ai';
-
-// Mock sales data (including date for each sale)
-const mockSales = [
-    { id: 1, date: '2024-10-01', customer: 'Customer A', totalAmount: 150, products: ['Product A', 'Product B'] },
-    { id: 2, date: '2024-10-02', customer: 'Customer B', totalAmount: 200, products: ['Product C'] },
-    { id: 3, date: '2024-10-03', customer: 'Customer C', totalAmount: 120, products: ['Product D', 'Product E'] },
-    { id: 4, date: '2024-10-04', customer: 'Customer D', totalAmount: 300, products: ['Product F'] },
-    { id: 5, date: '2024-10-05', customer: 'Customer E', totalAmount: 250, products: ['Product G', 'Product H'] },
-    { id: 6, date: '2024-10-06', customer: 'Customer F', totalAmount: 180, products: ['Product I'] },
-    { id: 7, date: '2024-10-07', customer: 'Customer G', totalAmount: 220, products: ['Product J', 'Product K'] },
-    { id: 8, date: '2024-10-08', customer: 'Customer H', totalAmount: 275, products: ['Product L'] },
-    { id: 9, date: '2024-10-09', customer: 'Customer I', totalAmount: 400, products: ['Product M'] },
-    { id: 10, date: '2024-10-10', customer: 'Customer J', totalAmount: 300, products: ['Product N', 'Product O'] },
-];
+import { baseUrl } from '../../baseUrl'; // Assuming baseUrl is where your backend is hosted
+import toast from 'react-hot-toast';
 
 const SalesList = () => {
-    const [sales, setSales] = useState(mockSales);
+    const [sales, setSales] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const salesPerPage = 5;
+
+    // Fetch sales data from the API
+    const fetchSales = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/sales`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // include credentials if authentication is required
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSales(data.sales); // Assuming the response has a 'sales' array
+            } else {
+                setError('Failed to fetch sales data');
+            }
+        } catch (error) {
+            console.error('Error fetching sales data:', error);
+            setError('An error occurred while fetching sales');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSales();
+    }, []);
 
     // Get current sales based on the page
     const indexOfLastSale = currentPage * salesPerPage;
     const indexOfFirstSale = indexOfLastSale - salesPerPage;
-    const currentSales = sales.slice(indexOfFirstSale, indexOfLastSale);
+    const currentSales = sales.slice(indexOfFirstSale, indexOfFirstSale + salesPerPage);
 
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Function to handle sale deletion
-    const handleDelete = (id) => {
-        const updatedSales = sales.filter((sale) => sale.id !== id);
-        setSales(updatedSales);
-    };
+
+    if (loading) {
+        return <div>Loading sales data...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <AppLayout>
@@ -50,24 +73,15 @@ const SalesList = () => {
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Customer</th>
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Total Amount</th>
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Products</th>
-                                    <th className="px-4 py-3 text-center text-gray-600 font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {currentSales.map((sale) => (
-                                    <tr key={sale.id} className="border-b hover:bg-gray-50 transition">
-                                        <td className="px-4 py-3 text-gray-700">{sale.date}</td>
-                                        <td className="px-4 py-3 text-gray-700">{sale.customer}</td>
+                                    <tr key={sale._id} className="border-b hover:bg-gray-50 transition">
+                                        <td className="px-4 py-3 text-gray-700">{new Date(sale.date).toLocaleDateString()}</td>
+                                        <td className="px-4 py-3 text-gray-700">{sale.customerName}</td>
                                         <td className="px-4 py-3 text-gray-700">${sale.totalAmount}</td>
-                                        <td className="px-4 py-3 text-gray-700">{sale.products.join(', ')}</td>
-                                        <td className="px-4 py-3 text-center">
-                                            <button
-                                                onClick={() => handleDelete(sale.id)}
-                                                className="text-red-600 hover:text-red-800 focus:outline-none"
-                                            >
-                                                <AiFillDelete size={20} />
-                                            </button>
-                                        </td>
+                                        <td className="px-4 py-3 text-gray-700">{sale.products.map((product) => product.productName).join(', ')}</td>
                                     </tr>
                                 ))}
                             </tbody>
