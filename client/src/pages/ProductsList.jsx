@@ -1,34 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
-import { AiFillDelete } from 'react-icons/ai';
-
-const mockProducts = [
-    { id: 1, name: 'Product A', price: 100, stock: 50, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 2, name: 'Product B', price: 200, stock: 30, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 3, name: 'Product C', price: 150, stock: 20, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 4, name: 'Product D', price: 300, stock: 15, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 5, name: 'Product E', price: 250, stock: 40, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 6, name: 'Product F', price: 350, stock: 25, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 7, name: 'Product G', price: 400, stock: 10, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 8, name: 'Product H', price: 120, stock: 60, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 9, name: 'Product I', price: 500, stock: 5, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 10, name: 'Product J', price: 220, stock: 35, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 11, name: 'Product K', price: 275, stock: 45, imageUrl: 'https://via.placeholder.com/100' },
-    { id: 12, name: 'Product L', price: 180, stock: 70, imageUrl: 'https://via.placeholder.com/100' },
-];
+import { baseUrl } from '../../baseUrl';
 
 const ProductsList = () => {
-    const [products, setProducts] = useState(mockProducts);
+    const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const productsPerPage = 4;
+    const [selectedProducts, setSelectedProducts] = useState(new Set());
 
-    // Filter products based on search term
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Get current products based on the page
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -36,10 +20,42 @@ const ProductsList = () => {
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Function to handle product deletion
-    const handleDelete = (id) => {
-        const updatedProducts = products.filter((product) => product.id !== id);
-        setProducts(updatedProducts);
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/product`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                setProducts(data.products);
+                console.log(products);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        fetchProducts();
+    }, [])
+
+    // Handle product selection
+    const handleSelectProduct = (id) => {
+        const updatedSelectedProducts = new Set(selectedProducts);
+        if (updatedSelectedProducts.has(id)) {
+            updatedSelectedProducts.delete(id);
+        } else {
+            updatedSelectedProducts.add(id);
+        }
+        setSelectedProducts(updatedSelectedProducts);
+    };
+
+    // Handle adding selected products to sale
+    const handleAddSale = () => {
+        // Logic to add the selected products to the sale
+        alert(`Adding products: ${Array.from(selectedProducts).join(', ')}`);
     };
 
     return (
@@ -64,35 +80,47 @@ const ProductsList = () => {
                         <table className="min-w-full bg-white border border-gray-300 rounded-lg">
                             <thead>
                                 <tr className="bg-gray-100 border-b">
+                                    <th className="px-4 py-3 text-left text-gray-600 font-semibold">Select</th>
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Image</th>
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Product Name</th>
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Price</th>
                                     <th className="px-4 py-3 text-left text-gray-600 font-semibold">Stock</th>
-                                    <th className="px-4 py-3 text-center text-gray-600 font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {currentProducts.map((product) => (
-                                    <tr key={product.id} className="border-b hover:bg-gray-50 transition">
+                                    <tr key={product._id} className="border-b hover:bg-gray-50 transition">
                                         <td className="px-4 py-3">
-                                            <img src={product.imageUrl} alt={product.name} className="h-16 w-16 object-cover rounded" />
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedProducts.has(product._id)}
+                                                onChange={() => handleSelectProduct(product._id)}
+                                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                            />
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <img src={product.image} alt={product.name} className="h-16 w-16 object-cover rounded" />
                                         </td>
                                         <td className="px-4 py-3 text-gray-700 font-medium">{product.name}</td>
-                                        <td className="px-4 py-3 text-gray-700">${product.price}</td>
+                                        <td className="px-4 py-3 text-gray-700">₹ {product.price}</td>
                                         <td className="px-4 py-3 text-gray-500">{product.stock}</td>
-                                        <td className="px-4 py-3 text-center">
-                                            <button
-                                                onClick={() => handleDelete(product.id)}
-                                                className="text-red-600 hover:text-red-800 focus:outline-none"
-                                            >
-                                                <AiFillDelete size={20} />
-                                            </button>
-                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                {/* Add Sale Button */}
+                <div className="flex justify-between mt-4">
+                    <button
+                        onClick={handleAddSale}
+                        disabled={selectedProducts.size === 0}
+                        className={`px-4 py-2 font-semibold text-white rounded-lg ${selectedProducts.size === 0 ? 'bg-gray-300' : 'bg-blue-600 hover:bg-blue-700'
+                            } transition`}
+                    >
+                        Add Sale
+                    </button>
                 </div>
 
                 {/* Pagination controls */}
