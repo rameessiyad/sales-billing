@@ -1,29 +1,41 @@
 const mongoose = require('mongoose');
 
 const subSalesSchema = new mongoose.Schema({
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true,
-    },
-    quantity: {
+    products: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            },
+            productName: {
+                type: String,
+                required: true,
+            },
+            pricePerUnit: {
+                type: String,
+                required: true,
+            },
+            totalPrice: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
+    tax: {
         type: Number,
         required: true,
     },
-    productName: {
-        type: String,
-        required: true
-    },
-    pricePerUnit: {
+    totalAmount: {
         type: Number,
         required: true,
     },
-    totalPrice: {
-        type: Number,
-        required: true,
-    }
 }, {
-    timestamps: true
+    timestamps: true,
 });
 
 const SubSales = mongoose.model('SubSales', subSalesSchema);
