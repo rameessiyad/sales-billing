@@ -10,10 +10,20 @@ const subSalesSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    price: {
+    productName: {
+        type: String,
+        required: true
+    },
+    pricePerUnit: {
         type: Number,
         required: true,
     },
+    totalPrice: {
+        type: Number,
+        required: true,
+    }
+}, {
+    timestamps: true
 });
 
 const SubSales = mongoose.model('SubSales', subSalesSchema);
