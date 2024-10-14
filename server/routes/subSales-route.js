@@ -6,7 +6,5 @@ const router = express.Router();
 
 router.post('/add', isAuth, addSubSales);
 router.get('/', isAuth, listSubSales);
-router.patch('/increase-quantity', isAuth, increaseQuantity);
-router.patch('/decrease-quantity', isAuth, decreaseQuantity);
 
 module.exports = router
