@@ -1,9 +1,32 @@
 import React from 'react';
 import { FaBox, FaReceipt, FaPlus } from 'react-icons/fa';
 import { RiLogoutBoxRLine } from "react-icons/ri";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { baseUrl } from '../../../baseUrl';
 
 const SideBar = () => {
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/user/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      localStorage.removeItem('user');
+
+      if (response.ok) {
+        window.location.href = '/login';
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="h-full flex flex-col bg-gray-800 text-white">
       {/* Sidebar Header */}
@@ -34,7 +57,7 @@ const SideBar = () => {
           </li>
 
           <li className='fixed bottom-5'>
-            <button className='flex items-center p-2 text-gray-300 hover:text-white rounded '>
+            <button className='flex items-center p-2 text-gray-300 hover:text-white rounded' onClick={handleLogout}>
               <RiLogoutBoxRLine className="mr-3" />
               Logout
             </button>
