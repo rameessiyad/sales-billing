@@ -1,11 +1,24 @@
 const mongoose = require('mongoose');
 
 const salesSchema = new mongoose.Schema({
-    subSales: [
+    products: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'SubSales',
-            required: true,
+            productName: {
+                type: String,
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            },
+            pricePerUnit: {
+                type: Number,
+                required: true,
+            },
+            totalPrice: {
+                type: Number,
+                required: true,
+            },
         }
     ],
     customer: {

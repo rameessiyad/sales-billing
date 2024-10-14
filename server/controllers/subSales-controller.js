@@ -61,4 +61,52 @@ module.exports = {
         });
     }),
 
+    //#desc increasw product quantity
+    //@route PUT /api/v1/sub-sales/increase-quantity
+    increaseQuantity: asyncHandler(async (req, res) => {
+        const { productId, quantity, subSalesId } = req.body;
+
+        if (!subSaleId || !productId || !quantityToAdd) {
+            return res.status(400).json({
+                success: false,
+                message: 'SubSale ID, Product ID, and quantity to add are required',
+            });
+        };
+
+        // Find the SubSale
+        const subSale = await SubSales.findById(subSaleId);
+        if (!subSale) {
+            return res.status(404).json({
+                success: false,
+                message: 'SubSale not found',
+            });
+        };
+
+        // Find the product in the SubSale
+        const productIndex = subSale.products.findIndex(product => product.productId.toString() === productId);
+        if (productIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found in SubSale',
+            });
+        };
+
+        // Increase quantity
+        subSale.products[productIndex].quantity += quantityToAdd;
+        const totalPrice = subSale.products[productIndex].pricePerUnit * subSale.products[productIndex].quantity;
+        subSale.products[productIndex].totalPrice = totalPrice;
+
+        // Update the total amount
+        const totalAmount = subSale.products.reduce((acc, product) => acc + product.totalPrice, 0) + subSale.tax;
+
+        subSale.totalAmount = totalAmount;
+        await subSale.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Product quantity updated successfully',
+            subSale,
+        });
+    })
+
 }
