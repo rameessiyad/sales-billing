@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
-import { AiFillDelete } from 'react-icons/ai';
-import { baseUrl } from '../../baseUrl'; // Assuming baseUrl is where your backend is hosted
-import toast from 'react-hot-toast';
+import { baseUrl } from '../../baseUrl'; 
 
 const SalesList = () => {
     const [sales, setSales] = useState([]);
@@ -19,13 +17,14 @@ const SalesList = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // include credentials if authentication is required
+                credentials: 'include', 
             });
 
             const data = await response.json();
+            console.log(data)
 
             if (response.ok) {
-                setSales(data.sales); // Assuming the response has a 'sales' array
+                setSales(data.sales); 
             } else {
                 setError('Failed to fetch sales data');
             }
