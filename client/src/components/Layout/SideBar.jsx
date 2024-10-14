@@ -26,7 +26,13 @@ const SideBar = () => {
               All Sales
             </Link>
           </li>
-        
+          <li>
+            <Link to="/new-sale" className="flex items-center p-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded">
+              <FaPlus className="mr-3" />
+              New Sale
+            </Link>
+          </li>
+
           <li className='fixed bottom-5'>
             <button className='flex items-center p-2 text-gray-300 hover:text-white rounded '>
               <RiLogoutBoxRLine className="mr-3" />

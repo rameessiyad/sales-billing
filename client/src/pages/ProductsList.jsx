@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import { baseUrl } from '../../baseUrl';
+import toast from 'react-hot-toast';
 
 const ProductsList = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [quantities, setQuantities] = useState({});
     const productsPerPage = 4;
     const [selectedProducts, setSelectedProducts] = useState(new Set());
 
@@ -53,9 +55,35 @@ const ProductsList = () => {
     };
 
     // Handle adding selected products to sale
-    const handleAddSale = () => {
-        // Logic to add the selected products to the sale
-        alert(`Adding products: ${Array.from(selectedProducts).join(', ')}`);
+    const handleAddSale = async () => {
+        const selectedProductsArray = Array.from(selectedProducts).map((productId) => ({
+            productId,
+            quantity: quantities[productId] || 1,
+        }));
+
+        const saleData = {
+            products: selectedProductsArray,
+            tax: 10,
+        };
+
+        try {
+            const response = await fetch(`${baseUrl}/sub-sales/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(saleData),
+                credentials: 'include',
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                toast.success("saled added");
+            }
+
+        } catch (error) {
+            console.log("Error adding products to sale", error);
+        }
     };
 
     return (

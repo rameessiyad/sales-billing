@@ -64,7 +64,7 @@ module.exports = {
     //#desc increasw product quantity
     //@route PATCH /api/v1/sub-sales/increase-quantity
     increaseQuantity: asyncHandler(async (req, res) => {
-        const { productId, quantity, subSalesId } = req.body;
+        const { productId, quantityToAdd, subSaleId } = req.body;
 
         if (!subSaleId || !productId || !quantityToAdd) {
             return res.status(400).json({

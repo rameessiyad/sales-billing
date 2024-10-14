@@ -46,6 +46,7 @@ const LoginForm = () => {
             };
 
             dispath(setCredentails(data.user))
+
             setLoading(false);
 
             navigate('/');

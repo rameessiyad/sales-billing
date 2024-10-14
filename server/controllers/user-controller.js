@@ -47,14 +47,15 @@ module.exports = {
         })
 
         //generate token
-        generateToken(res, user._id);
+        const token = generateToken(res, user._id);
 
         res.status(200).json({
             success: true,
             message: 'User logged in successfully',
             user: {
                 username: user.username,
-                email: user.email
+                email: user.email,
+                token: token
             }
         });
     }),
