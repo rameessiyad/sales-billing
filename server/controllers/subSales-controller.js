@@ -30,6 +30,14 @@ module.exports = {
                 });
             }
 
+            // Check stock availability
+            if (productDetails.stock < quantity) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Insufficient stock for product: ' + productDetails.name,
+                });
+            }
+
             const totalPrice = productDetails.price * quantity;
 
             subSalesProducts.push({
@@ -42,6 +50,10 @@ module.exports = {
 
             // Update total amount
             totalAmount += totalPrice;
+
+            // Decrease the product stock
+            productDetails.stock -= quantity;
+            await productDetails.save();
         }
 
         totalAmount += tax;
