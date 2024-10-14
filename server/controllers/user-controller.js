@@ -57,6 +57,15 @@ module.exports = {
                 email: user.email
             }
         });
+    }),
 
+    //@desc logout user
+    //@route POST /api/v1/user/logout
+    logoutUser: asyncHandler(async (req, res) => {
+        res.clearCookie('token');
+        res.status(200).json({
+            success: true,
+            message: 'Logged out'
+        });
     })
 }
