@@ -22,7 +22,16 @@ const NewSale = () => {
                     credentials: 'include',
                 });
                 const data = await response.json();
-                setSubSales(data.subSales);
+
+                console.log(data)
+                const updatedSubSales = data.subSales.map((subSale) => {
+                    subSale.totalAmount = subSale.products.reduce(
+                        (acc, item) => acc + item.pricePerUnit * item.quantity, 0
+                    );
+                    return subSale;
+                });
+
+                setSubSales(updatedSubSales);
 
             } catch (error) {
                 console.error('Error fetching sub-sales:', error);
@@ -33,39 +42,28 @@ const NewSale = () => {
         fetchSubSales();
     }, []);
 
-    //increase quantity
-    const handleIncreaseQuantity = async (subSaleIndex, productIndex) => {
-        const subSale = subSales[subSaleIndex];
-        const product = subSale.products[productIndex];
+    // Handle quantity change 
+    const handleQuantityChange = (subSaleIndex, productIndex, change) => {
+        setSubSales((prevSubSales) => {
+            const newSubSales = [...prevSubSales];
+            const subSale = newSubSales[subSaleIndex];
+            const product = subSale.products[productIndex];
 
-        try {
-            const response = await fetch(`${baseUrl}/sub-sales/increase-quantity`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    subSaleId: subSale._id,
-                    productId: product._id,
-                    quantityToAdd: 1,
+            // Update the product quantity
+            product.quantity += change;
 
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                setSubSales((prevSubSales) => {
-                    const newSubSales = [...prevSubSales];
-                    newSubSales[subSaleIndex] = data.subSale;
-                    return newSubSales;
-                });
+            if (product.quantity < 1) {
+                product.quantity = 1;
             }
 
-        } catch (error) {
-            console.error('Error increasing quantity:', error);
-        }
+            product.totalPrice = product.pricePerUnit * product.quantity;
+
+            subSale.totalAmount = subSale.products.reduce(
+                (acc, item) => acc + item.totalPrice, 0
+            );
+
+            return newSubSales;
+        });
     };
 
     const handleGenerateBill = async () => {
@@ -75,9 +73,18 @@ const NewSale = () => {
         }
 
         const subSalesId = subSales[0]._id;
+
+        const updatedProducts = subSales[0].products.map((product) => ({
+            productName: product.productName,
+            quantity: product.quantity, 
+            pricePerUnit: product.pricePerUnit,
+            totalPrice: product.totalPrice,
+        }));
+
         const saleDetails = {
             customer: customerName,
             subSalesId,
+            products: updatedProducts, 
         };
 
         try {
@@ -87,14 +94,14 @@ const NewSale = () => {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify(saleDetails),
+                body: JSON.stringify(saleDetails), 
             });
 
             const data = await response.json();
 
             if (data.success) {
                 toast.success('Bill generated');
-                navigate(`/invoice/${data.sale._id}`)
+                navigate(`/invoice/${data.sale._id}`);
             } else {
                 toast.error(data.message);
             }
@@ -102,7 +109,7 @@ const NewSale = () => {
         } catch (error) {
             console.error('Error generating bill:', error);
         }
-    }
+    };
 
 
     if (loading) {
@@ -136,14 +143,14 @@ const NewSale = () => {
                                             <td className="px-4 py-3 text-gray-700 flex items-center">
                                                 <button
                                                     className="bg-gray-200 px-2 py-1 rounded-lg mr-2"
-
+                                                    onClick={() => handleQuantityChange(subSaleIndex, productIndex, -1)}
                                                 >
                                                     -
                                                 </button>
                                                 {product.quantity}
                                                 <button
                                                     className="bg-gray-200 px-2 py-1 rounded-lg ml-2"
-                                                    onClick={() => handleIncreaseQuantity(subSaleIndex, productIndex)}
+                                                    onClick={() => handleQuantityChange(subSaleIndex, productIndex, 1)}
                                                 >
                                                     +
                                                 </button>
@@ -181,13 +188,14 @@ const NewSale = () => {
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition mt-4"
                             onClick={handleGenerateBill}
                         >
-                            generate bill
+                            Generate Bill
                         </button>
                     </div>
                 ) : (
                     <div className="text-center">
                         <p className="text-gray-700 mb-4">No sub-sales available.</p>
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition" 
+                        <button
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                             onClick={() => navigate('/products')}
                         >
                             Add Product to Sale

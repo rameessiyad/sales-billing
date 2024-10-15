@@ -8,6 +8,7 @@ const Dashboard = lazy(() => import('../pages/Dashboard'));
 const ProductsList = lazy(() => import('../pages/ProductsList'));
 const SalesList = lazy(() => import('../pages/SalesList'));
 const NewSale = lazy(() => import('../pages/NewSale'));
+const AddProduct = lazy(() => import('../pages/AddProduct'));
 
 const Routing = () => {
     const user = localStorage.getItem('user');
@@ -31,6 +32,7 @@ const Routing = () => {
                     <Route path="/sales" element={<SalesList />} />
                     <Route path="/new-sale" element={<NewSale />} />
                     <Route path="/invoice/:saleId" element={<Invoice />} />
+                    <Route path="/add-product" element={<AddProduct />} />
                 </Routes>
             </Suspense>
         </div>

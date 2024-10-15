@@ -37,7 +37,6 @@ const ProductsList = () => {
                 });
                 const data = await response.json();
                 setProducts(data.products);
-                console.log(products);
             } catch (error) {
                 console.log(error);
             }
@@ -57,11 +56,19 @@ const ProductsList = () => {
         setSelectedProducts(updatedSelectedProducts);
     };
 
+    // Handle quantity change for selected products
+    const handleQuantityChange = (id, value) => {
+        setQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [id]: value,
+        }));
+    };
+
     // Handle adding selected products to sale
     const handleAddSale = async () => {
         const selectedProductsArray = Array.from(selectedProducts).map((productId) => ({
             productId,
-            quantity: quantities[productId] || 1,
+            quantity: quantities[productId] || 1,  
         }));
 
         const saleData = {
@@ -81,7 +88,7 @@ const ProductsList = () => {
 
             const data = await response.json();
             if (data.success) {
-                toast.success("saled added");
+                toast.success("Sale added successfully");
                 navigate('/new-sale')
             }
 
@@ -143,7 +150,41 @@ const ProductsList = () => {
                     </div>
                 </div>
 
-                {/* Add Sale Button */}
+                {selectedProducts.size > 0 && (
+                    <div className="mt-6">
+                        <h3 className="text-lg font-bold text-gray-700 mb-4">Selected Products</h3>
+                        <div className="space-y-4">
+                            {Array.from(selectedProducts).map((productId) => {
+                                const selectedProduct = products.find((product) => product._id === productId);
+                                return (
+                                    <div key={productId} className="flex items-center space-x-4 border p-4 rounded-lg">
+                                        <div className="w-1/3">
+                                            <img
+                                                src={selectedProduct.image}
+                                                alt={selectedProduct.name}
+                                                className="h-16 w-16 object-cover rounded"
+                                            />
+                                            <p className="text-gray-700 font-medium">{selectedProduct.name}</p>
+                                        </div>
+                                        <div className="w-1/3">
+                                            <p>₹ {selectedProduct.price}</p>
+                                        </div>
+                                        <div className="w-1/3">
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={quantities[productId] || 1}
+                                                onChange={(e) => handleQuantityChange(productId, e.target.value)}
+                                                className="border border-gray-300 rounded-lg p-2 w-full"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex justify-between mt-4">
                     <button
                         onClick={handleAddSale}
@@ -151,7 +192,7 @@ const ProductsList = () => {
                         className={`px-4 py-2 font-semibold text-white rounded-lg ${selectedProducts.size === 0 ? 'bg-gray-300' : 'bg-blue-600 hover:bg-blue-700'
                             } transition`}
                     >
-                        Add Sale
+                        continue
                     </button>
                 </div>
 
