@@ -1,1 +1,1 @@
-export const baseUrl = "https://sales-billing.onrender.com"
+export const baseUrl = "https://sales-billing.onrender.com/api/v1"
