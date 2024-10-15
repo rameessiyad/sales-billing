@@ -73,7 +73,7 @@ const ProductsList = () => {
 
         const saleData = {
             products: selectedProductsArray,
-            tax: 10,
+            tax: 5,
         };
 
         try {

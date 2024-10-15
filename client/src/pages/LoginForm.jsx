@@ -62,6 +62,10 @@ const LoginForm = () => {
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-2xl">
                 <h2 className="text-3xl font-bold text-center text-gray-700">Welcome Back!</h2>
                 <p className="text-center text-gray-500">Please log in to your account.</p>
+                <div className='p-4 bg-blue-100'>
+                    <p className="text-sm text-red-600">email: admin@gmail.com</p>
+                    <p className="text-sm text-red-600 my-4">password: admin123</p>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div>
                         <label className="block mb-1 text-sm font-medium text-gray-600">Email</label>

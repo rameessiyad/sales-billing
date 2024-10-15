@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import toast from 'react-hot-toast';
 import { baseUrl } from '../../../baseUrl';
 
-// Thunk for adding a product
 export const addProduct = createAsyncThunk('product/addProduct', async (formData, { rejectWithValue }) => {
     try {
         const response = await fetch(`${baseUrl}/product/add`, {
