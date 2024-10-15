@@ -14,7 +14,8 @@ const PORT = process.env.PORT || 4000;
 
 // Allowed origins
 const allowedOrigins = [
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://sales-billing.vercel.app/'
 ];
 
 // Middlewares
