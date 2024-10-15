@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
-import toast from 'react-hot-toast';
-import { baseUrl } from '../../baseUrl';
+import { useDispatch, useSelector } from 'react-redux';
+import { addProduct } from '../redux/slices/productSlice';
 import { useNavigate } from 'react-router-dom';
 
 const AddProduct = () => {
@@ -9,15 +9,16 @@ const AddProduct = () => {
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
     const [image, setImage] = useState(null);
-    const [loading, setLoading] = useState(false); 
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const loading = useSelector((state) => state.product.loading);
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     };
 
-    const navigate = useNavigate();
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         const formData = new FormData();
@@ -26,33 +27,15 @@ const AddProduct = () => {
         formData.append('stock', stock);
         formData.append('image', image);
 
-        setLoading(true); 
-
-        try {
-            const response = await fetch(`${baseUrl}/product/add`, {
-                method: 'POST',
-                credentials: 'include',
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                toast.success("Product added successfully!");
+        dispatch(addProduct(formData)).then((result) => {
+            if (result.meta.requestStatus === 'fulfilled') {
                 setName('');
                 setPrice('');
                 setStock('');
                 setImage(null);
-                navigate('/products');
-            } else {
-                toast.error(data.message || "Failed to add product");
+                navigate('/products'); 
             }
-        } catch (error) {
-            toast.error("Error adding product, please try again");
-            console.error("Error:", error);
-        } finally {
-            setLoading(false); 
-        }
+        });
     };
 
     return (
@@ -117,6 +100,6 @@ const AddProduct = () => {
             </div>
         </AppLayout>
     );
-}
+};
 
 export default AddProduct;
