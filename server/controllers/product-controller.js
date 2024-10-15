@@ -27,7 +27,7 @@ module.exports = {
     //#desc list all products
     //#route GET /api/v1/product
     listProducts: asyncHandler(async (req, res) => {
-        const products = await Product.find();
+        const products = await Product.find().sort({ createdAt: -1 });
         res.status(200).json({
             success: true,
             products: products
