@@ -42,33 +42,10 @@ const NewSale = () => {
         fetchSubSales();
     }, []);
 
-    // Handle quantity change 
-    const handleQuantityChange = (subSaleIndex, productIndex, change) => {
-        setSubSales((prevSubSales) => {
-            const newSubSales = [...prevSubSales];
-            const subSale = newSubSales[subSaleIndex];
-            const product = subSale.products[productIndex];
-
-            // Update the product quantity
-            product.quantity += change;
-
-            if (product.quantity < 1) {
-                product.quantity = 1;
-            }
-
-            product.totalPrice = product.pricePerUnit * product.quantity;
-
-            subSale.totalAmount = subSale.products.reduce(
-                (acc, item) => acc + item.totalPrice, 0
-            );
-
-            return newSubSales;
-        });
-    };
 
     const handleGenerateBill = async () => {
         if (!customerName) {
-            toast.error('Please enter customer name');
+            toast.error('Customer name is required');
             return;
         }
 
@@ -76,7 +53,7 @@ const NewSale = () => {
 
         const updatedProducts = subSales[0].products.map((product) => ({
             productName: product.productName,
-            quantity: product.quantity, 
+            quantity: product.quantity,
             pricePerUnit: product.pricePerUnit,
             totalPrice: product.totalPrice,
         }));
@@ -84,7 +61,7 @@ const NewSale = () => {
         const saleDetails = {
             customer: customerName,
             subSalesId,
-            products: updatedProducts, 
+            products: updatedProducts,
         };
 
         try {
@@ -94,7 +71,7 @@ const NewSale = () => {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify(saleDetails), 
+                body: JSON.stringify(saleDetails),
             });
 
             const data = await response.json();
@@ -141,19 +118,7 @@ const NewSale = () => {
                                         <tr key={product._id} className="border-b hover:bg-gray-50 transition">
                                             <td className="px-4 py-3 text-gray-700">{product.productName}</td>
                                             <td className="px-4 py-3 text-gray-700 flex items-center">
-                                                <button
-                                                    className="bg-gray-200 px-2 py-1 rounded-lg mr-2"
-                                                    onClick={() => handleQuantityChange(subSaleIndex, productIndex, -1)}
-                                                >
-                                                    -
-                                                </button>
                                                 {product.quantity}
-                                                <button
-                                                    className="bg-gray-200 px-2 py-1 rounded-lg ml-2"
-                                                    onClick={() => handleQuantityChange(subSaleIndex, productIndex, 1)}
-                                                >
-                                                    +
-                                                </button>
                                             </td>
                                             <td className="px-4 py-3 text-gray-700">{product.pricePerUnit}</td>
                                             <td className="px-4 py-3 text-gray-700">{product.totalPrice}</td>
