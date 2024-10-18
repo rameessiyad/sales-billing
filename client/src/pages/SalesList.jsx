@@ -78,7 +78,7 @@ const SalesList = () => {
                                     <tr key={sale._id} className="border-b hover:bg-gray-50 transition">
                                         <td className="px-4 py-3 text-gray-700">{new Date(sale.date).toLocaleDateString()}</td>
                                         <td className="px-4 py-3 text-gray-700">{sale.customer}</td>
-                                        <td className="px-4 py-3 text-gray-700">${sale.totalAmount}</td>
+                                        <td className="px-4 py-3 text-gray-700">₹{sale.totalAmount}</td>
                                         <td className="px-4 py-3 text-gray-700">{sale.products.map((product) => product.productName).join(', ')}</td>
                                     </tr>
                                 ))}
